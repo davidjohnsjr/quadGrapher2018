@@ -1,16 +1,17 @@
 <!--   Polynomial graphing application for soft dev class. Updated 2017.
   Using bootstrap 3, we will try to keep responsive features to be used on mobile device -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <title>Bootstrap Example</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-  <!-- styles to override bootstrap settings or add our own styles -->
-  <style>
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <title>Polynomial Solver</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="quadScript.js"></script>
+    <!-- styles to override bootstrap settings or add our own styles -->
+    <style>
     /* Set gray background color and 100% height */
     .sidenav {
       height: 100%;
@@ -23,14 +24,41 @@
       }
       .row.content {height:auto;} 
     }
+    .formInfo {
+      color: black;
+      background-color: #92acef;
+      padding: 2px;
+      border-radius: 10px;
+    }
     .coeff {
       width: 90%;
       background-color: #5b85ef;
       padding: 10px;
       border-radius: 20px;
+    }
+    .myResults {
+      margin-top: 5px;
+      width: 90%;
+      background-color: #214fc4;
+      padding: 10px;
+      border-radius: 20px;
       color: white;
+      text-align: center;
+    }
+    .myButtons {
+      margin-top: 5px;
+      padding: 2px;
+      width: 90%;
+      background-color: #5b85ef;
+      position: relative;
+      text-align: center;
+      border-radius: 5px;
+    }
+    body {
+      background-color: #dbe4f9;
     }
     canvas {
+      width: 100%;
       display: block;
       border-style: dotted;
       border-width: 5px;
@@ -39,47 +67,63 @@
     }
   </style>
 
-  </head>
-  <body>
-   <!--  Nav bar that is responsive (container-fluid with data-toggle at collapse) -->
-   <nav class="navbar navbar-inverse">
-    <div class="container-fluid">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>                        
-        </button>
-        <a class="navbar-brand" href="#">Math Solutions</a>
-      </div>
-      <div class="collapse navbar-collapse" id="myNavbar">
-        <ul class="nav navbar-nav">
-          <li class="active"><a href="">Linear Grapher</a></li>
-          <li><a href="#2">Quadratic Grapher</a></li>
-          <li><a href="#3">Cubic Grapher</a></li>
-        </ul>
-      </div>
+</head>
+<body onload="init()">
+ <!--  Nav bar that is responsive (container-fluid with data-toggle at collapse) -->
+ <nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="#">Polynomial Solutions</a>
     </div>
-  </nav>
-
-  <!--    our main body of divs that are responsive (go from in-line to block when screen is small) -->
-  <div class="container-fluid">    
-    <div class="row content">
-      <div class="col-sm-2 sidenav">
-        <div class="coeff">
-          <p class="formInfo">Coefficients go here<br>
-
-            a = <input size="5" type="text" id="linA" value="1"> <br>
-            b = <input size="5" type="text" id="linB" value="0"> <br>
-            c = <input size="5" type="text" id="constant" value="0"> <br>
-            <button class="btn" onclick="">Submit Values</button>
-          </p>
-        </div>
-      </div>
-      <div class="col-sm-8 text-left"> 
-        <canvas class="canvasGrids" id="mycanvas"></canvas>
-      </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li><a href="">Linear Grapher</a></li>
+        <li class="active"><a href="#2">Quadratic Grapher</a></li>
+        <li><a href="#3">Cubic Grapher</a></li>
+      </ul>
     </div>
   </div>
-  </body>
+</nav>
+
+<!--    our main body of divs that are responsive (go from in-line to block when screen is small) -->
+<div class="container-fluid">    
+  <div class="row content">
+    <div class="col-sm-2 sidenav">
+      <div class="coeff">
+        <p class="formInfo">Coefficients<br>
+
+          a = <input size="5" type="text" id="quadA" value="1"> <br>
+          b = <input size="5" type="text" id="linB" value="0"> <br>
+          c = <input size="5" type="text" id="constant" value="0"> <br>
+        </p>
+        <div class="myButtons">
+          <button type="button" class="btn btn-primary btn-sm" onclick="QF()">Submit Values</button>
+        </div>
+      </div>
+      <div class="myResults">
+        <p id="solution1">x-int at (?,0)</p>
+        <p id="solution2">x-int  at (?,0)</p>
+        <p id="yInt">y-Int at (0,?)</p>
+        <p id="cp">corresponding point at (?,?)</p>
+        <p id="vertex">vertx</p>
+        <p id="symLine">symmetry line is at x=?</p>
+
+      </div>
+      <div class="myButtons">
+        <button type="button" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-plus"></span></button>
+        <button type="button" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-minus"></span></button>
+      </div>
+    </div>
+    <div class="col-sm-8 text-left"> 
+      <canvas class="canvasGrids" id="mycanvas"></canvas>
+    </div>
+
+  </div>
+</div>
+</body>
 </html>
